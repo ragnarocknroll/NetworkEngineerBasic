@@ -6,8 +6,8 @@
 
 Устройство | Интерфейс | Ip-адрес / префикс
 -----------|-----------|-------------------|
-S1         | VLAN 1    | 192.168.1.1/24
-PC-A       | NIC       | 192.168.1.2/24
+S1         | VLAN 1    | 192.168.1.2/24
+PC-A       | NIC       | 192.168.1.10/24
 
 ### Задачи:
 #### Часть 1. Проверка конфигурации коммутатора по умолчанию
@@ -114,4 +114,275 @@ d. Изучение характеристик SVI для VLAN 1:
 В таблицах видны VLAN'ы, их имена и типы по умолчанию, статусы, порты и их типы, идентификаторы SAID (идентификатор ассоциации безопасности), MTU - максимальный размер блока данных (в байтах), который может быть передан на канальном уровне OSI без фрагментаци - он равен 1500 байт.
 
 Для VLAN'ов 1004 и 1005 видны стандарты IEEE и IBM соответственно.
+
+
+
+![](/Lab1/images/02_show-interface-vlan.jpg)
+
+Опираясь на нее я делаю вывод, что
+
+1. VLAn1 активен, административно отключен и протокол линии отключен
+2. Железо - интерфейс центрального процессора, его физический адрес: 00:01:63:9e:4b:75
+3. Максимальный размер блока данных - 1500 байт, пропускная способность 100000 килобит, задержка 100000 миллисекунд.
+
+e. Изучение IP-свойств интерфейса SVI сети VLAN 1
+
+Для этого использую команду 
+
+`Switch#show ip interface vlan1`
+
+Полученное сообщение имеет вид:
+
+`Vlan1 is administratively down, line protocol is down
+  Internet protocol processing disabled`
+
+Что повторяет полученную в пнукте d информацию, кроме фразы "обработка интернет протокола недоступна".
+
+
+f. Подсоединение кабеля Ethernet компьютера PC-A к порту 6 на коммутаторе и изучение IP-свойства интерфейса SVI сети VLAN 1
+
+Включаю интерфейс F0/6 на коммутаторе. Дожидаюсь согласования параметров скорости и дуплекса между устройствами, и после ввожу команду: 
+
+`Switch#show interfaces fastEthernet 0/6`
+
+Получаю сообщение вида:
+
+![](/Lab1/images/03_show-interfaces-fastEthernet-06.jpg)
+
+На основании которого интерфейс F0/6 включен и подключен. Физический адрес: 00:0d:bd:6a:dd:06
+
+g. Изучение сведений о версии ОС Cisco IOS на коммутаторе
+
+С помощью команды
+
+`Switch#show version`
+
+Информацию о коммутаторе, среди которой указана текущая версия:
+
+`Version 15.0(2)SE4`
+
+И название файла образа системы
+
+`C2960-LANBASEK9-M`
+
+Ранее эти данные были прочитаны в спецификации для коммутатора в CPT.
+
+h. Изучение свойств по умолчанию интерфейса FastEthernet, который используется компьютером PC-A.
+
+С помощью команды:
+
+`Switch#show interfaces fastEthernet 0/6`
+
+Получаю сообщение вида:
+
+![](/Lab1/images/03_show-interfaces-fastEthernet-06.jpg)
+
+На основании которого интерфейс F0/6 включен и подключен. 
+
+На текущем шаге коммутатор определил наличие подключения и включил порт 0/6. Вручную порт можно включить из режима конфигурации командой `no shutdown`
+
+Физический адрес (MAC-адрес): 00:0d:bd:6a:dd:06
+
+Дуплекс задан полным, скорость 100Мб/с
+
+i. Изучение флеш-память.
+
+Выполняю команду:
+
+`Switch#dir flash`
+
+Получаю информацию, что во флеш-памяти содержится файл образа Cisco IOS с именем `2960-lanbasek9-mz.150-2.SE4.bin`
+
+### Часть 2. Настройка базовых параметров сетевых устройств
+
+#### Шаг 1
+Поскольку в памяти коммутатора не хранится файл конфигурации, настройки коммутатора нужно задать вручную.
+
+a. Для этого необходимо войти в привелегированный режим, а из него перейти в режим конфигурации с помощью команды`configure terminal`.
+
+После ввода отобразится сообщение
+
+`Enter configuration commands, one per line.  End with CNTL/Z.`
+
+Командная строка отобразит состояние конфигурирования следующим образом:
+
+`Switch(config)#`
+
++ задаю имя коммутатора
+`Switch(config)#hostname S1`
++ запрещаю нежелательный поиск в DNS
+`S1(config)# no ip domain-lookup`
++ настраиваю шифрование пароля
+`service password-encryption`
++ задаю  `class` в качестве секретного пароля для доступа в привилегированный режим
+`S1(config)#enable secret class`
++ настраиваю сообщение дня
+`S1(config)#banner motd #
+Enter TEXT message.  End with the character '#'.
+Unathorized acces is strictly prohibited. #`
+
+b.	Назначение IP-адреса интерфейсу SVI на коммутаторе. Благодаря этому станет возможным удаленное управление коммутатором.
+
+Для назначения IP-адреса необходимо войти в настройки интерфейса:
+
+`S1(config)#interface vlan1`
+
+Затем ввести адрес и маску:
+
+`S1(config-if)#ip address 192.168.1.2 255.255.255.0`
+
+Включить интерфейс:
+
+`S1(config-if)#no shutdown`
+
+И выйти из режима настройки интерфейса командой `exit`
+
+Проверка:
+
+![](/Lab1/images/04_check-vlan.jpg)
+
+c.	Доступ через порт консоли также следует ограничить  с помощью пароля. Использую `cisco` в качестве пароля для входа в консоль в этом задании. Конфигурация по умолчанию разрешает все консольные подключения без пароля. Чтобы консольные сообщения не прерывали выполнение команд, использую параметр logging synchronous.
+
+Набираю последовательность команд:
+
+`S1(config)#line con 0`
+
+`S1(config-line)#password cisco`
+
+`S1(config-line)#login` - нужна  для вывода из маршрутизатора приглашения аутентификации
+
+`S1(config-line)#logging synchronous`
+
+`exit`
+
+d.	Необходимо настроить каналы виртуального соединения для удаленного управления (vty), чтобы коммутатор разрешил доступ через Telnet. Если не настроить пароль VTY, будет невозможно подключиться к коммутатору по протоколу Telnet.
+
+Набираю последовательность команд:
+
+`S1(config)#line vty 0 15`
+
+`S1(config-line)#password cisco`
+
+`S1(config-line)#login`
+
+`exit`
+
+#### Шаг 2. Настройка IP-адреса на компьютере PC-A.
+
+Настройка IP-адреса и маски подсети в соответствии с таблицей адресации.
+
+![](/Lab1/images/05_PC-settings.jpg)
+
+### Часть 3. Проверка сетевых подключений
+
+В третьей части лабораторной работы необходимо проверить и задокументировать конфигурацию коммутатора, протестировать сквозное соединение между компьютером PC-A и коммутатором S1, а также протестировать возможность удаленного управления коммутатором.
+
+#### Шаг 1. Отображение конфигурации коммутатора.
+
+Использую консольное подключение на компьютере PC-A для отображения и проверки конфигурации коммутатора. Команда `show run` позволяет постранично отобразить всю текущую конфигурацию. Для пролистывания необходимо использовать клавишу пробела.
+
+Привожу листинг конфигурации:
+
+```S1#show run
+Building configuration...
+
+Current configuration : 1316 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S1
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+no ip domain-lookup
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ ip address 192.168.1.2 255.255.255.0
+!
+banner motd ^C
+Unathorized acces is strictly prohibited. ^C
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login
+line vty 5 15
+ password 7 0822455D0A16
+ login
+ ```
+
+
+
+Проверка параметров VLAN1
+`S1# show interface vlan 1 `
+
+Полоса пропускания 100000Кбит
 
