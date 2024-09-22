@@ -42,17 +42,17 @@ Cisco packet tracer с эмулированными:
 
 #### Шаг 1. Подключение сети в соответствии с топологией.
 
-![](/Lab2/images/00-topology.jpg)
+![](/Lab2/mages/00-topology.jpg)
 
 #### Шаг 2. Настройка узлов ПК.
 
 Настройка PC-A:
 
-![](/Lab2/images/01-PC-A.jpg)
+![](/Lab2/Images/01-PC-A.jpg)
 
 Настройка PC-B:
 
-![](/Lab2/images/02-PC-B.jpg)
+![](/Lab2/Images/02-PC-B.jpg)
 
 #### Шаг 3. Выполнение инициализации и перезагрузки коммутаторов.
 
@@ -366,7 +366,7 @@ a. Необходимо открыть командную строку на PC-A
 
 Открытие окна командной строки Windows:
 
-![](/Lab2/images/03-ipconfig.jpg)
+![](/Lab2/Images/03-ipconfig.jpg)
 
 Вопросы:
 
