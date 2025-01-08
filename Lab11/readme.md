@@ -2,7 +2,7 @@
 
 ### Топология
 
-![](/Lab10/Images/00_topology.jpg)
+![](/Lab11/Images/00_topology.jpg)
 
 
 ### Таблица адресации 
