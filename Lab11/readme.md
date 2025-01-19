@@ -392,7 +392,7 @@ line vty 5 15
 end
 ```
 
-c.	Используйте команду show interfaces trunk для проверки настроек транка.
+c.	Используйте команду `show interfaces trunk` для проверки настроек транка.
 
 ```
 S1#show interfaces trunk
@@ -477,6 +477,34 @@ The name for the keys will be: R1.ccna-lab.com
 
 d.	Настройте первые пять линий VTY на каждом устройстве, чтобы поддерживать только SSH-соединения и с локальной аутентификацией.
 
+```
+R1(config)#line vty 0 4
+R1(config-line)#transport input ssh
+R1(config-line)#login local
+R1(config-line)#exit
+```
+
+```
+R2(config)#line vty 0 4
+R2(config-line)#transport input ssh
+R2(config-line)#login local
+R2(config-line)#exit
+```
+
+```
+S1(config)#line vty 0 4
+S1(config-line)#transport input ssh
+S1(config-line)#login local
+S1(config-line)#exit
+```
+
+```
+S2(config)#line vty 0 4
+S2(config-line)#transport input ssh
+S2(config-line)#login local
+S2(config-line)#exit
+```
+
 #### Шаг 2. Включите защищенные веб-службы с проверкой подлинности на R1.
 
 a.	Включите сервер HTTPS на R1.
@@ -532,12 +560,12 @@ PC-B | SSH      | 172.16.1.1 |
 
 От   | Протокол | Назначение | Результат  |
 -----|----------|------------|------------|
-PC-A | Ping     | 10.40.0.10 | Сбой       |
-PC-A | Ping     | 10.20.0.1  | Успех      |
-PC-B | Ping     | 10.30.0.10 | Сбой       |
-PC-B | Ping     | 10.20.0.1  | Сбой       |
-PC-B | Ping     | 172.16.1.1 | Успех      |
+PC-A | Ping     | 10.40.0.10 | Сбой   +    |
+PC-A | Ping     | 10.20.0.1  | Успех  +    |
+PC-B | Ping     | 10.30.0.10 | Сбой   +    |
+PC-B | Ping     | 10.20.0.1  | Сбой   +    |
+PC-B | Ping     | 172.16.1.1 | Успех  +    |
 PC-B | HTTPS    | 10.20.0.1  | Сбой   **N/A** |
 PC-B | HTTPS    | 172.16.1.1 | Успех  **N/A**|
-PC-B | SSH      | 10.20.0.1  | Сбой       |
-PC-B | SSH      | 172.16.1.1 | Успех      |
+PC-B | SSH      | 10.20.0.1  | Сбой   +    |
+PC-B | SSH      | 172.16.1.1 | Успех  +    |
