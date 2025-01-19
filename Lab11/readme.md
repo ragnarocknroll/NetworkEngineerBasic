@@ -79,6 +79,232 @@ h.	Сохраните текущую конфигурацию в файл заг
 
 Закройте окно настройки.
 
+```
+R1#show startup-config 
+Using 2416 bytes
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R1
+!
+!
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+username SSHadmin secret 5 $1$mERr$jnsDknF4Wwkgx2tzKw49w1
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip domain-name ccna-lab.com
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 172.16.1.1 255.255.255.0
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.20
+ description Management Network
+ encapsulation dot1Q 20
+ ip address 10.20.0.1 255.255.255.0
+!
+interface GigabitEthernet0/0/1.30
+ description Operations Network
+ encapsulation dot1Q 30
+ ip address 10.30.0.1 255.255.255.0
+ ip access-group 102 in
+!
+interface GigabitEthernet0/0/1.40
+ description Sales Network
+ encapsulation dot1Q 40
+ ip address 10.40.0.1 255.255.255.0
+ ip access-group 101 in
+!
+interface GigabitEthernet0/0/1.1000
+ description Native VLAN
+ encapsulation dot1Q 1000 native
+ no ip address
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+access-list 101 remark ACL 101 fulfills policies 1, 2, and 3
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 22
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq www
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 host 10.30.0.1 eq www
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq www
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 443
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 host 10.30.0.1 eq 443
+access-list 101 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq 443
+access-list 101 deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo
+access-list 101 deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
+access-list 101 permit ip any any
+access-list 102 remark ACL 102 fulfills policy 4
+access-list 102 deny icmp 10.30.0.0 0.0.0.255 10.40.0.0 0.0.0.255 echo
+access-list 102 permit ip any any
+!
+banner motd ^C
+ATTENTION!!! Unauthorized access is strictly prohibited!!! ^C
+!
+!
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login local
+ transport input ssh
+!
+!
+!
+end
+```
+
+```
+R2#show startup-config 
+Using 842 bytes
+!
+version 16.6.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R2
+!
+!
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^C
+ATTENTION!!! Unauthorized access is strictly prohibited!!! ^C
+!
+!
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login
+!
+!
+!
+end
+```
+
 #### Шаг 3. Настройте базовые параметры каждого коммутатора.
 
 Откройте окно конфигурации
@@ -98,6 +324,371 @@ f.	Зашифруйте открытые пароли.
 g.	Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
 
 h.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.
+
+```
+S1#show startup-config 
+Using 3068 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S1
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+no ip domain-lookup
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 20,30,40,1000
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/3
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/4
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/5
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 20,30,40,1000
+ switchport mode trunk
+!
+interface FastEthernet0/6
+ switchport access vlan 30
+ switchport mode access
+!
+interface FastEthernet0/7
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/8
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/9
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/10
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/11
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/12
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/13
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/14
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/15
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/16
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/17
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/18
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/19
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/20
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/21
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/22
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/23
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/24
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/1
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan20
+ ip address 10.20.0.2 255.255.255.0
+!
+ip default-gateway 10.20.0.1
+!
+banner motd ^C
+ATTENTION!!! Unauthorized access is strictly prohibited!!! ^C
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ login
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login
+line vty 5 15
+ password 7 0822455D0A16
+ login
+!
+!
+!
+!
+end
+
+```
+
+```
+S2#show startup-config 
+Using 3027 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S2
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+no ip domain-lookup
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 20,30,40,1000
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/3
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/4
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/5
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/6
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/7
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/8
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/9
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/10
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/11
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/12
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/13
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/14
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/15
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/16
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/17
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/18
+ switchport access vlan 40
+ switchport mode access
+!
+interface FastEthernet0/19
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/20
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/21
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/22
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/23
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/24
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/1
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan20
+ ip address 10.20.0.3 255.255.255.0
+!
+ip default-gateway 10.20.0.1
+!
+banner motd ^C
+ATTENTION!!! Unauthorized access is strictly prohibited!!! ^C
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ login
+!
+line vty 0 4
+ password 7 0822455D0A16
+ login
+line vty 5 15
+ password 7 0822455D0A16
+ login
+!
+!
+!
+!
+end
+```
 
 ### Часть 2. Настройка сетей VLAN на коммутаторах.
 #### Шаг 1. Создайте сети VLAN на коммутаторах.
