@@ -1111,6 +1111,36 @@ b.	Настройте R1 для проверки подлинности поль
 
 Адреса ПК можно посмотреть в таблице адресации.
 
+PC-A:
+```
+C:\>ipconfig
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Link-local IPv6 Address.........: FE80::2D0:BAFF:FE59:ED
+   IPv6 Address....................: ::
+   IPv4 Address....................: 10.30.0.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     10.30.0.1
+```
+
+PC-B:
+```
+C:\>ipconfig
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Link-local IPv6 Address.........: FE80::290:2BFF:FE8E:1DA7
+   IPv6 Address....................: ::
+   IPv4 Address....................: 10.40.0.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     10.40.0.1
+```
+
 #### Шаг 2. Выполните следующие тесты. Эхозапрос должен пройти успешно.
 
 **Примечание:** Возможно, вам придется отключить брандмауэр ПК для работы ping
